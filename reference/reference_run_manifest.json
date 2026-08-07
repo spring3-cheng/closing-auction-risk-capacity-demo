@@ -7,7 +7,8 @@
     "bytes": 460981504,
     "sha256": "841418b344ea11ce8834afd563ecd389955ef1ca7bb52af6408bd3095f0fea56",
     "local_build_status": "built_and_hash_verified",
-    "github_release_status": "not_uploaded"
+    "release_transport": "six SHA256-verified GitHub Release assets reassembled by 00_get_data.ipynb",
+    "github_release_status": "private_draft_assets_verified_pending_publish"
   },
   "smoke_run": {
     "status": "passed",

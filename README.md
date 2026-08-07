@@ -57,14 +57,14 @@ PowerShell 先执行 `$env:RUN_MODE='smoke'`；bash 使用 `export RUN_MODE=smok
 
 ### 3. Full 数据复现
 
-完整数据发布在该私人仓库的 `data-v1.0.0` Release，ZIP 不进入 Git 历史；manifest 中记录的固定合同为：
+完整数据发布在该私人仓库的 `data-v1.0.0` Release，ZIP 不进入 Git 历史。为保证网页上传稳定性，Release 以 6 个分卷资产发布；`00` 会逐卷下载与 SHA256 校验、重组为完整 ZIP，再以总 SHA256 复核。manifest 中记录的总包合同为：
 
 ```text
 bytes: 460981504
 sha256: 841418b344ea11ce8834afd563ecd389955ef1ca7bb52af6408bd3095f0fea56
 ```
 
-设置 `RUN_MODE=full` 后运行同一组 Notebook。私人 Release 下载需要设置 `GH_TOKEN` 或 `GITHUB_TOKEN`，token 只需具备该仓库的只读访问权限，不会被 Notebook 保存或输出。`00` 会从 Git origin 推导仓库，调用 GitHub Release API，下载到 `.part`，校验通过后原子改名并解压；也可手工把已校验 ZIP 放入 `release/`。
+设置 `RUN_MODE=full` 后运行同一组 Notebook。私人 Release 下载需要设置 `GH_TOKEN` 或 `GITHUB_TOKEN`，token 只需具备该仓库的只读访问权限，不会被 Notebook 保存或输出。`00` 会从 Git origin 推导仓库，调用 GitHub Release API，将通过校验的分卷缓存到 `release/.parts/`，再原子生成完整 ZIP 并解压；也可手工把已校验 ZIP 放入 `release/`。
 
 ```bash
 export RUN_MODE=full
@@ -79,7 +79,7 @@ PowerShell 对应命令为 `$env:RUN_MODE='full'` 和 `$env:GH_TOKEN='<token>'`�
 ## 数据发布与来源
 
 - `data/smoke/` 和 `data/data_manifest.json` 进入 Git 仓库。
-- 460,981,504 字节的完整 ZIP 作为私人 GitHub Release asset 单独上传。
+- 460,981,504 字节的完整 ZIP 以 6 个可校验分卷作为私人 GitHub Release assets 单独上传。
 - 数据经授权可公开再分发，范围说明见 `DATA_LICENSE.md`；来源台账见 `PROVENANCE.csv`。
 - 可发布数据已移除 `source_file`、`source_shard_id` 等追踪列；实际 GitHub 仓库按用户选择设为 private，且不包含内部接口、访问凭据或旧项目 Git 历史。
 

@@ -58,7 +58,8 @@ class NotebookContractTests(unittest.TestCase):
         for token in [
             "RUN_MODE", "sha256_file", "00_active_data.json", ".part",
             "GITHUB_TOKEN", "GH_TOKEN", "api.github.com/repos",
-            "application/octet-stream", "download_with_headers",
+            "application/octet-stream", "download_with_headers", "release_parts",
+            "Release part SHA256 mismatch", "github_release_asset_api_urls",
         ]:
             self.assertIn(token, data_source)
         for token in [

@@ -408,6 +408,38 @@
   "release_asset": {
     "bytes": 460981504,
     "file_name": "closing_auction_demo_data_v1.zip",
+    "parts": [
+      {
+        "bytes": 83886080,
+        "file_name": "closing_auction_demo_data_v1.zip.part01",
+        "sha256": "2ed72ee5afcc946453db67f5a50da488fa4414c6e3b477c772b18f0f12d13e48"
+      },
+      {
+        "bytes": 83886080,
+        "file_name": "closing_auction_demo_data_v1.zip.part02",
+        "sha256": "6208dddd434d4cb2c22ce5c10a3c832a234024bfdbf55e617fc5c7078654d03d"
+      },
+      {
+        "bytes": 83886080,
+        "file_name": "closing_auction_demo_data_v1.zip.part03",
+        "sha256": "04d8e75379385d5740a3e46547139fb802ac1b35bd4c3f5a9f0da1fd8339f80a"
+      },
+      {
+        "bytes": 83886080,
+        "file_name": "closing_auction_demo_data_v1.zip.part04",
+        "sha256": "fa4713dcda9373499d43959d87ed8b37ec8d958ee5327ff43d94749f22ff649b"
+      },
+      {
+        "bytes": 83886080,
+        "file_name": "closing_auction_demo_data_v1.zip.part05",
+        "sha256": "b5ab5caa393826e21fd5a0462e4b776e69e67f04145c6e73351990c6af41dc24"
+      },
+      {
+        "bytes": 41551104,
+        "file_name": "closing_auction_demo_data_v1.zip.part06",
+        "sha256": "8fc823e251109958dd4cc1b495b7b9d8d338172fe1c4df39eb282d21abdebe73"
+      }
+    ],
     "sha256": "841418b344ea11ce8834afd563ecd389955ef1ca7bb52af6408bd3095f0fea56"
   },
   "release_tag": "data-v1.0.0",
