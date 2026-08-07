@@ -16,6 +16,7 @@ __pycache__/
 .coverage
 
 # Environments and editors
+.worktrees/
 .venv/
 venv/
 .env
