@@ -34,6 +34,8 @@
       "requested_quantile_alpha_used": true,
       "shape_h_mode": "quantile_specific_train_curve",
       "shape_h_side_aware": true,
+      "strength_label_granularity": "anchor_level_curve_fit",
+      "base_label_source": "direct_quantile_model_at_x0_no_observed_outcome",
       "cross_quantile_order_enforced": false,
       "capacity_risk_measure": "absolute_final_quantile",
       "continuous_prediction_source": "quantile_specific_H_piecewise_linear"
@@ -41,8 +43,8 @@
     "diagnostics": {
       "direct_q95_final_test_coverage": 0.975654,
       "direct_q99_final_test_coverage": 0.993305,
-      "shape_q95_final_test_coverage": 0.973220,
-      "shape_q99_final_test_coverage": 0.991479,
+      "shape_q95_final_test_coverage": 0.967742,
+      "shape_q99_final_test_coverage": 0.992696,
       "worst_q95_q99_bucket": "shape_strength q95 sell >5% Cash/ADV",
       "worst_q95_q99_bucket_n": 91,
       "worst_q95_q99_bucket_coverage": 0.879121,

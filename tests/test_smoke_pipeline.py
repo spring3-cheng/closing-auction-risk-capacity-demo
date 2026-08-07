@@ -78,6 +78,11 @@ class SmokePipelineTests(unittest.TestCase):
         self.assertEqual(stage["ratio_curve_monotone_postprocess"], "cummax")
         self.assertEqual(stage["capacity_risk_measure"], "absolute_final_quantile")
         self.assertEqual(stage["continuous_prediction_source"], "quantile_specific_H_piecewise_linear")
+        self.assertEqual(stage["strength_label_granularity"], "anchor_level_curve_fit")
+        self.assertEqual(
+            stage["base_label_source"],
+            "direct_quantile_model_at_x0_no_observed_outcome",
+        )
         self.assertTrue({"h_support_status", "support_cap_status"}.issubset(candidates.columns))
         self.assertTrue(monotonicity["postprocess_total_drop_count"].eq(0).all())
         self.assertTrue(monotonicity["postprocess_impact_drop_count"].eq(0).all())

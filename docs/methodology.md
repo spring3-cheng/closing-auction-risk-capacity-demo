@@ -25,7 +25,7 @@ total_bad_move_bps = max(side_sign × total_move_bps, 0)
 默认 quantile registry 为 `0.50/0.80/0.85/0.90/0.95/0.99`。每个 quantile head 都是独立候选，不强制 `q99 ≥ q95` 或其他跨 quantile 顺序；输出 crossing rate 和 crossing 幅度用于诊断。
 
 - `direct_lgbm`：直接拟合 `total_bad_move_bps`，每个 head 使用其声明的真实 quantile alpha，不再用其他 tau 代理 q95/q99。
-- `shape_strength`：先把同一 quantile 的 direct 模型在 `x_adv=0` 上预测为 `B_q(X)`，再用 train-only 的非负增量标签构造 side-aware、沿 `x_adv` 单调的 `H_q(x)`，并用不含 `x_adv` 的可见条件特征预测 `A_q(X)`。raw prediction 为 `max(B_q+A_qH_q, 0)`，不把真实最终自然涨跌当作 base 输入。
+- `shape_strength`：先把同一 quantile 的 direct 模型在 `x_adv=0` 上预测为 `B_q(X)`，再用 train-only 的非负增量构造 side-aware、沿 `x_adv` 单调的 `H_q(x)`。随后按 `date × sym × side × quote_strategy` anchor 对整条已观测曲线做非负最小二乘，得到一个 `A_label`，并仅用不含 `x_adv` 的可见条件特征训练 `A_q(X)`。raw prediction 为 `max(B_q+A_qH_q, 0)`，不把真实最终自然涨跌当作 base 输入。由于发布面板没有真实 `x_adv=0` 结果，`B_q` 是模型预测锚点，不是观测 no-order 标签；单点 anchor 会自然退化为单点曲线拟合，不能包装成完整反事实验证。
 - `impact guardrail`：独立的 0.95 quantile 模型，不随 total-risk operating quantile 自动变化。
 
 `H_q` 在 `x_adv=1%` 归一化；若参考点尺度小于整条训练曲线最大尺度的 0.1%，则退回最大尺度，避免近零分母放大。该保护和形状曲线都只使用 train，calibration/test 不参与。

@@ -8,7 +8,7 @@
 |---|---|
 | `00_get_data.ipynb` | 获取 smoke 或 GitHub Release 数据，校验 SHA256、行数和 schema |
 | `01_build_panel_and_labels.ipynb` | 重建风险标签，声明 `14:59:59` 特征白名单与 no-order anchor |
-| `02_quantile_risk_model.ipynb` | 训练真实 quantile head 与 `B_q+A_qH_q` 候选并进行因果校准 |
+| `02_quantile_risk_model.ipynb` | 训练真实 quantile head 与 `B_q+A_qH_q` 候选；`A_q` 使用 train-only anchor-level curve fit 并进行因果校准 |
 | `03_capacity_inversion.ipynb` | 构造 45 点绝对分位风险曲线、单调化并连续反解 10bps 容量 |
 | `04_optimization_and_report.ipynb` | 分开评价 B1/B3，按约束 fail-closed 选择 operating point |
 
@@ -87,7 +87,8 @@ PowerShell 对应命令为 `$env:RUN_MODE='full'` 和 `$env:GH_TOKEN='<token>'`�
 
 - 主面板是 2024 年 200 万行阶段性分层样本，不是全市场全量逐笔数据；每个 anchor 的观测 ratio grid 稀疏。
 - 容量使用模型生成的 `0 + 44` 点网格；`x=0` 也是基于可见特征的模型预测，不使用该日最终 `market_move_bps`，未观测档不能当作真实反事实结果。
-- quantile registry 可扩展，各 quantile 独立，不强制 q99/q95 或其他跨分位排序；单个候选的 `x_adv` 风险曲线必须单调。
+- quantile registry 可扩展，各 quantile 独立，不强制 q99/q95 或其他跨分位排序；单个候选的 `x_adv` 风险曲线必须单调。`A_q` 的训练标签按 `date × sym × side × quote_strategy` anchor 从观测曲线拟合，单点 anchor 仅提供退化的局部信息。
+- 发布面板没有真实 `x_adv=0` 结果；`B_q` 统一来自 direct quantile model 的 `x=0` 特征副本，不能解读为真实 no-order 反事实观测。
 - 每个 direct head 使用其声明的真实 quantile alpha；shape-strength 的 side-aware `H_q(x)` 只由 train 构造，容量超过训练支撑域时封顶并标记 `support_cap_reached`。
 - 容量约束作用于包含 no-order base、条件增量、校准 buffer 与 causal floor 的 `absolute_final_quantile`，不是只约束边际冲击。
 - 12 月同时用于策略 operating-point selection 与 evaluation，属于 `same-sample policy-development diagnostic`，不是独立样本外策略验证。
