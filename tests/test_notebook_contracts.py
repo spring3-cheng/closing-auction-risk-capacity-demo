@@ -106,6 +106,24 @@ class NotebookContractTests(unittest.TestCase):
         self.assertIn("model_parameters(quantile)", source)
         self.assertNotIn("model_parameters(RAW_TAU_MAP[quantile])", source)
 
+    def test_model_notebook_uses_anchor_level_curve_fit_strength_labels(self):
+        source = notebook_source("02_quantile_risk_model.ipynb")
+        for token in [
+            "fit_anchor_strength_label",
+            "anchor_strength_labels",
+            "anchor_level_curve_fit",
+            "A_label",
+            "n_curve_points",
+            "base_label_source",
+            "date × sym × side × quote_strategy",
+        ]:
+            self.assertIn(token, source)
+        self.assertIn("np.sum(group_h * group_increment)", source)
+        self.assertNotIn(
+            "strength_target = increment_bad_bps / np.maximum(h_values, 0.05)",
+            source,
+        )
+
     def test_capacity_notebook_orders_only_ratio_curves(self):
         source = notebook_source("03_capacity_inversion.ipynb")
         for token in [

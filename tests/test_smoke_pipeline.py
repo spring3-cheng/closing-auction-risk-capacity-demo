@@ -48,6 +48,11 @@ class SmokePipelineTests(unittest.TestCase):
         self.assertTrue(stage["final_month_learning_excluded"])
         self.assertEqual(stage["shape_h_mode"], "quantile_specific_train_curve")
         self.assertTrue(stage["shape_h_side_aware"])
+        self.assertEqual(stage["strength_label_granularity"], "anchor_level_curve_fit")
+        self.assertEqual(
+            stage["base_label_source"],
+            "direct_quantile_model_at_x0_no_observed_outcome",
+        )
         self.assertEqual(stage["quantile_registry"], [0.5, 0.8, 0.85, 0.9, 0.95, 0.99])
         row = split.iloc[0]
         self.assertLess(row["train_max_date"], row["calibration_min_date"])
@@ -56,6 +61,12 @@ class SmokePipelineTests(unittest.TestCase):
         self.assertTrue({"coverage", "pinball_loss"}.issubset(metrics.columns))
         self.assertTrue({"side", "ratio_bucket", "coverage"}.issubset(grouped.columns))
         self.assertGreater(len(crossing), 0)
+        anchor_labels = pd.read_csv(OUTPUTS / "02_anchor_strength_labels.csv")
+        self.assertGreater(len(anchor_labels), 0)
+        self.assertTrue(
+            {"quantile", "anchor_id", "A_label", "n_curve_points"}.issubset(anchor_labels.columns)
+        )
+        self.assertTrue(anchor_labels["n_curve_points"].ge(1).all())
 
     def test_capacity_contracts(self):
         stage = read_json("03_stage_contract.json")
