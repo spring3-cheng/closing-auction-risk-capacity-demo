@@ -1,0 +1,28 @@
+# Full and derived data
+data/raw/
+data/processed/
+release/
+outputs/
+models/
+cache/
+
+# Notebook and Python runtime files
+.ipynb_checkpoints/
+*.part
+*.tmp
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Environments and editors
+.venv/
+venv/
+.env
+.DS_Store
+Thumbs.db
+
+# Smoke data and public contracts remain tracked
+!data/smoke/
+!data/smoke/*.parquet
+!data/data_manifest.json

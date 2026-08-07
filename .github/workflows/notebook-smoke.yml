@@ -1,0 +1,31 @@
+name: notebook-smoke
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUN_MODE: smoke
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install locked dependencies
+        run: python -m pip install -r requirements-lock.txt
+      - name: Execute five notebooks
+        run: |
+          mkdir -p outputs/executed
+          python -m nbconvert --to notebook --execute notebooks/00_get_data.ipynb --output-dir outputs/executed --output 00_get_data.executed.ipynb --ExecutePreprocessor.timeout=600
+          python -m nbconvert --to notebook --execute notebooks/01_build_panel_and_labels.ipynb --output-dir outputs/executed --output 01_build_panel_and_labels.executed.ipynb --ExecutePreprocessor.timeout=600
+          python -m nbconvert --to notebook --execute notebooks/02_quantile_risk_model.ipynb --output-dir outputs/executed --output 02_quantile_risk_model.executed.ipynb --ExecutePreprocessor.timeout=1200
+          python -m nbconvert --to notebook --execute notebooks/03_capacity_inversion.ipynb --output-dir outputs/executed --output 03_capacity_inversion.executed.ipynb --ExecutePreprocessor.timeout=1200
+          python -m nbconvert --to notebook --execute notebooks/04_optimization_and_report.ipynb --output-dir outputs/executed --output 04_optimization_and_report.executed.ipynb --ExecutePreprocessor.timeout=1200
+      - name: Verify contracts
+        run: python -m unittest discover -s tests -v
