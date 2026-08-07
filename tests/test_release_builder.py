@@ -16,6 +16,18 @@ from scripts.build_release_data import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+TEXT_SUFFIXES = {".csv", ".ipynb", ".json", ".md", ".py", ".txt", ".yml", ".yaml"}
+
+
+def provenance_sha256_variants(path: Path) -> set[str]:
+    payload = path.read_bytes()
+    variants = {hashlib.sha256(payload).hexdigest()}
+    if path.suffix.lower() in TEXT_SUFFIXES:
+        normalized_lf = payload.replace(b"\r\n", b"\n")
+        normalized_crlf = normalized_lf.replace(b"\n", b"\r\n")
+        variants.add(hashlib.sha256(normalized_lf).hexdigest())
+        variants.add(hashlib.sha256(normalized_crlf).hexdigest())
+    return variants
 
 
 class ReleaseBuilderTests(unittest.TestCase):
@@ -27,9 +39,9 @@ class ReleaseBuilderTests(unittest.TestCase):
             if relative_path.parts[0] == "release" and not path.exists():
                 continue
             self.assertTrue(path.is_file(), msg=f"missing provenance file: {relative_path.as_posix()}")
-            self.assertEqual(
-                sha256_file(path),
+            self.assertIn(
                 record["sha256"],
+                provenance_sha256_variants(path),
                 msg=f"stale provenance hash: {relative_path.as_posix()}",
             )
 

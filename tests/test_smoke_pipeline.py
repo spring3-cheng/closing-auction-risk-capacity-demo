@@ -46,6 +46,8 @@ class SmokePipelineTests(unittest.TestCase):
 
         self.assertFalse(stage["cross_quantile_order_enforced"])
         self.assertTrue(stage["final_month_learning_excluded"])
+        self.assertEqual(stage["shape_h_mode"], "quantile_specific_train_curve")
+        self.assertTrue(stage["shape_h_side_aware"])
         self.assertEqual(stage["quantile_registry"], [0.5, 0.8, 0.85, 0.9, 0.95, 0.99])
         row = split.iloc[0]
         self.assertLess(row["train_max_date"], row["calibration_min_date"])
@@ -63,6 +65,9 @@ class SmokePipelineTests(unittest.TestCase):
         self.assertEqual(stage["action_grid_count"], 45)
         self.assertFalse(stage["cross_quantile_order_enforced"])
         self.assertEqual(stage["ratio_curve_monotone_postprocess"], "cummax")
+        self.assertEqual(stage["capacity_risk_measure"], "absolute_final_quantile")
+        self.assertEqual(stage["continuous_prediction_source"], "quantile_specific_H_piecewise_linear")
+        self.assertTrue({"h_support_status", "support_cap_status"}.issubset(candidates.columns))
         self.assertTrue(monotonicity["postprocess_total_drop_count"].eq(0).all())
         self.assertTrue(monotonicity["postprocess_impact_drop_count"].eq(0).all())
         formal = candidates[candidates["selection_eligible_solver"]]

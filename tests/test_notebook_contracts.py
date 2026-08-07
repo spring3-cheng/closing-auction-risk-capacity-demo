@@ -98,9 +98,11 @@ class NotebookContractTests(unittest.TestCase):
             "increment_bad_bps",
             "side_aware",
             "SHAPE_REFERENCE_X_ADV",
+            "SHAPE_MIN_REFERENCE_SCALE_RATIO",
             "shape_h_support_status",
         ]:
             self.assertIn(token, source)
+        self.assertIn("max_curve_scale * SHAPE_MIN_REFERENCE_SCALE_RATIO", source)
         self.assertIn("model_parameters(quantile)", source)
         self.assertNotIn("model_parameters(RAW_TAU_MAP[quantile])", source)
 

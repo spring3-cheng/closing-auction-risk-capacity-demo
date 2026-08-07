@@ -24,17 +24,19 @@ total_bad_move_bps = max(side_sign × total_move_bps, 0)
 
 默认 quantile registry 为 `0.50/0.80/0.85/0.90/0.95/0.99`。每个 quantile head 都是独立候选，不强制 `q99 ≥ q95` 或其他跨 quantile 顺序；输出 crossing rate 和 crossing 幅度用于诊断。
 
-- `direct_lgbm`：直接拟合 `total_bad_move_bps`。为复现既有训练探索，q95/q99 的 raw tau 分别为 0.80/0.90，其余采用同名 tau。
-- `shape_strength`：直接基于总风险标签，在训练集内估计沿 `x_adv` 单调的 shape `H(q,x)`，再用不含 `x_adv` 的可见条件特征预测强度；不把真实最终自然涨跌当作 base 输入。
+- `direct_lgbm`：直接拟合 `total_bad_move_bps`，每个 head 使用其声明的真实 quantile alpha，不再用其他 tau 代理 q95/q99。
+- `shape_strength`：先把同一 quantile 的 direct 模型在 `x_adv=0` 上预测为 `B_q(X)`，再用 train-only 的非负增量标签构造 side-aware、沿 `x_adv` 单调的 `H_q(x)`，并用不含 `x_adv` 的可见条件特征预测 `A_q(X)`。raw prediction 为 `max(B_q+A_qH_q, 0)`，不把真实最终自然涨跌当作 base 输入。
 - `impact guardrail`：独立的 0.95 quantile 模型，不随 total-risk operating quantile 自动变化。
+
+`H_q` 在 `x_adv=1%` 归一化；若参考点尺度小于整条训练曲线最大尺度的 0.1%，则退回最大尺度，避免近零分母放大。该保护和形状曲线都只使用 train，calibration/test 不参与。
 
 最终风险由 raw prediction、calibration buffer 和历史 causal floor 组成。报告整体 coverage、`side × ratio_bucket` coverage、最差桶、pinball loss、预测分位水平及 crossing，而不是只追求 coverage。
 
 ## 容量反解
 
-容量阶段为每个 B3 anchor 构造 45 点网格（模型 no-order `x=0` 加 44 个正档），分别评分 total risk 和 impact guardrail。`x=0` 的 total risk 来自模型预测及历史校准，不由该日真实 `market_move_bps` 覆盖。每个候选内部沿 `x_adv` 使用 `cummax` 单调化，禁止利用局部下降获得虚高容量；不同 quantile 之间不排序。
+容量阶段为每个 B3 anchor 构造 45 点网格（模型 no-order `x=0` 加 44 个正档），分别评分 total risk 和 impact guardrail。`x=0` 的 total risk 来自模型预测及历史校准，不由该日真实 `market_move_bps` 覆盖。容量风险口径是 `absolute_final_quantile`，包含 base、增量、calibration buffer 与 causal floor。每个候选内部沿 `x_adv` 使用 `cummax` 单调化，禁止利用局部下降获得虚高容量；不同 quantile 之间不排序。
 
-正式候选统一用单调线性插值反解 10bps 边界。grid floor 和 shape exact-H 标签仅作为诊断，后者因 ratio bucket calibration buffer 变化不能进入正式选择。最终可执行容量为：
+正式候选统一用单调线性插值反解 10bps 边界；shape-strength 使用 `quantile_specific_H_piecewise_linear`。grid floor 和 shape exact-H 标签仅作为诊断，后者因 ratio bucket calibration buffer 变化不能进入正式选择。shape 曲线在训练最大 `x_adv` 之外标记 `right_clipped`，若反解越过支撑域则收紧到最后一个受支持网格并标记 `support_cap_reached`。最终可执行容量为：
 
 ```text
 x_safe_final = min(x_safe_price_risk, x_safe_fill)
