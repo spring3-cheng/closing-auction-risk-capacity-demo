@@ -78,7 +78,6 @@ class NotebookContractTests(unittest.TestCase):
         source = notebook_source("02_quantile_risk_model.ipynb")
         for token in [
             "QUANTILE_REGISTRY",
-            "RAW_TAU_MAP",
             "shape_strength",
             "crossing_rate",
             "side × ratio_bucket",
@@ -87,8 +86,23 @@ class NotebookContractTests(unittest.TestCase):
         ]:
             self.assertIn(token, source)
         self.assertNotIn("market_bad_prediction + strength * h_values", source)
+        self.assertNotIn("RAW_TAU_MAP", source)
         self.assertNotIn("enforce_quantile_order", source)
         self.assertNotIn("enforce_quantile_stack_order", source)
+
+    def test_model_notebook_uses_quantile_specific_train_only_shape_curves(self):
+        source = notebook_source("02_quantile_risk_model.ipynb")
+        for token in [
+            "quantile_specific_train_curve",
+            "base_prediction_at_x0",
+            "increment_bad_bps",
+            "side_aware",
+            "SHAPE_REFERENCE_X_ADV",
+            "shape_h_support_status",
+        ]:
+            self.assertIn(token, source)
+        self.assertIn("model_parameters(quantile)", source)
+        self.assertNotIn("model_parameters(RAW_TAU_MAP[quantile])", source)
 
     def test_capacity_notebook_orders_only_ratio_curves(self):
         source = notebook_source("03_capacity_inversion.ipynb")
@@ -103,6 +117,18 @@ class NotebookContractTests(unittest.TestCase):
         ]:
             self.assertIn(token, source)
         self.assertNotIn("q99_final >= q95_final", source)
+
+    def test_capacity_notebook_uses_absolute_quantile_piecewise_linear_curve(self):
+        source = notebook_source("03_capacity_inversion.ipynb")
+        for token in [
+            "absolute_final_quantile",
+            "quantile_specific_H_piecewise_linear",
+            "base_prediction_at_x0",
+            "shape_h_support_status",
+            "right_clipped",
+            "support_cap_status",
+        ]:
+            self.assertIn(token, source)
 
     def test_optimization_notebook_discloses_same_sample_scope(self):
         source = notebook_source("04_optimization_and_report.ipynb")
