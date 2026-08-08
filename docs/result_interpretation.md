@@ -2,7 +2,7 @@
 
 ## 先看结论
 
-仓库内置 smoke run 只证明五阶段流程和业务合同可执行，不支持正式模型优劣或容量结论。完整 2,000,000 行数据尚未在本机跑完，任何正式 coverage、pinball、最差桶与容量比较都应以 full run 新产物为准。
+仓库内置 smoke run 只证明五阶段流程和业务合同可执行。当前本机已经针对 Release 中的完整 2,000,000 行面板执行完 `00 → 01 → 02 → 03 → 04`；下列 full run 数字来自落盘产物，但仍属于 same-sample policy-development diagnostic，不是独立样本外策略验证。
 
 ## Smoke 验收结果
 
@@ -17,6 +17,15 @@
 - 本版 `shape_strength` 已改为 train-only anchor-level `A_label` 曲线拟合；由于公开面板没有真实 `x=0` 行，`B_q` 使用 direct 模型的 `x=0` 预测，不能把该基线当作观测反事实。
 
 上述指标仅用于验证 contract。smoke 每个分层保留极少样本，coverage、pinball、最差桶和资金总量都可能与 full run 显著不同。
+
+## Full run 验收结果
+
+- 2,000,000 行、242 个交易日、516,874 个容量 anchor；12 月 B3 有 46,690 个 key，B3 anchor coverage 为 100%。标签审计的 total/impact 最大重建差异均为 0。
+- final test 的 direct q95/q99 coverage 为 97.83%/99.55%，shape-strength 为 97.59%/99.52%；对应 pinball loss 分别为 20.899/7.041 与 18.744/5.739。
+- `side × ratio_bucket` 中，direct q95 最低桶为 `sell × 2-5%`，coverage 95.16%（55,386 行）；shape-strength q95 同一桶 coverage 95.09%（55,386 行）。
+- final 阶段最高 crossing rate 为 0；但原始容量曲线存在 847,345 个 total-risk 下降和 1,739,448 个 impact-risk 下降，`cummax` 后两者均为 0，不能把后处理后的单调性当作原始模型性质。
+- 12 个正式候选全部未达到约束，`selection_status=no_eligible_candidate_fail_closed`；全量容量候选中有正的 `x_safe_final` 行，但候选层面没有通过 B3 超越率/容量等联合门槛的 operating point。
+- 12 月同时用于策略 operating-point selection 与 evaluation，且 `independent_out_of_sample_policy_evaluation=false`。因此这些结果可以作为项目阶段性离线证据，不能写成独立 OOS、线上效果或生产容量。
 
 ## Full run 必看项
 

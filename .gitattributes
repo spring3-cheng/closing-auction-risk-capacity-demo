@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+# Keep data and archive assets byte-for-byte; do not normalize binary payloads.
+*.parquet binary
+*.zip binary
+*.joblib binary
+*.png binary
+*.jpg binary
+*.jpeg binary

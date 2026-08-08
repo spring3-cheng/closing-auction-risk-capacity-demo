@@ -78,7 +78,7 @@ jupyter lab
 
 PowerShell 对应命令为 `$env:RUN_MODE='full'` 和 `$env:GH_TOKEN='<token>'`。若使用自托管下载地址，可另外设置 `DATA_RELEASE_URL`；私有 GitHub asset 仍需 token。
 
-完整数据为 2,000,000 行分层样本，当前本机只完成 smoke 全链，`reference/reference_run_manifest.json` 明确记录 `full_run_status=not_run`。
+完整数据为 2,000,000 行分层样本。本机已按 `00 → 01 → 02 → 03 → 04` 顺序完成一次 `RUN_MODE=full` 全链；全量结果和边界说明见 `reference/reference_run_manifest.json` 与 `docs/result_interpretation.md`。这仍是 same-sample policy-development diagnostic，不是独立样本外策略验证或生产承诺。
 
 ## 数据发布与来源
 

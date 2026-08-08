@@ -56,6 +56,63 @@
     "selection_evaluation_scope": "same-sample policy-development diagnostic",
     "independent_out_of_sample_policy_evaluation": false
   },
-  "full_run_status": "not_run",
-  "full_run_claim": "No full-data numerical result is claimed until all five notebooks are executed against the Release asset."
+  "full_run_status": "passed",
+  "full_run": {
+    "status": "passed",
+    "run_mode": "full",
+    "evaluation_scope": "same-sample policy-development diagnostic",
+    "notebooks_executed_in_order": [
+      "00_get_data.ipynb",
+      "01_build_panel_and_labels.ipynb",
+      "02_quantile_risk_model.ipynb",
+      "03_capacity_inversion.ipynb",
+      "04_optimization_and_report.ipynb"
+    ],
+    "panel_rows": 2000000,
+    "dates": 242,
+    "anchors": 516874,
+    "b3_keys": 46690,
+    "b3_anchor_coverage_rate": 1.0,
+    "formal_candidate_count": 12,
+    "eligible_candidate_count": 0,
+    "model_contract": {
+      "quantile_registry": [0.5, 0.8, 0.85, 0.9, 0.95, 0.99],
+      "requested_quantile_alpha_used": true,
+      "shape_h_mode": "quantile_specific_train_curve",
+      "shape_h_side_aware": true,
+      "strength_label_granularity": "anchor_level_curve_fit",
+      "base_label_source": "direct_quantile_model_at_x0_no_observed_outcome",
+      "cross_quantile_order_enforced": false,
+      "capacity_risk_measure": "absolute_final_quantile",
+      "continuous_prediction_source": "quantile_specific_H_piecewise_linear"
+    },
+    "diagnostics": {
+      "direct_q95_final_test_coverage": 0.978288,
+      "direct_q99_final_test_coverage": 0.995465,
+      "shape_q95_final_test_coverage": 0.975909,
+      "shape_q99_final_test_coverage": 0.995170,
+      "direct_q95_final_test_pinball_loss": 20.899224,
+      "direct_q99_final_test_pinball_loss": 7.040532,
+      "shape_q95_final_test_pinball_loss": 18.743918,
+      "shape_q99_final_test_pinball_loss": 5.739133,
+      "worst_direct_q95_bucket": "sell 2-5%",
+      "worst_direct_q95_bucket_n": 55386,
+      "worst_direct_q95_bucket_coverage": 0.951556,
+      "worst_shape_q95_bucket": "sell 2-5%",
+      "worst_shape_q95_bucket_n": 55386,
+      "worst_shape_q95_bucket_coverage": 0.950854,
+      "final_max_crossing_rate": 0.0,
+      "raw_total_drop_count": 847345,
+      "raw_impact_drop_count": 1739448,
+      "postprocess_total_drop_count": 0,
+      "postprocess_impact_drop_count": 0,
+      "formal_capacity_median_status": "all family x quantile medians equal zero",
+      "positive_final_capacity_count": 108275,
+      "formal_selection_status": "no_eligible_candidate_fail_closed"
+    },
+    "selection_status": "no_eligible_candidate_fail_closed",
+    "selection_evaluation_scope": "same-sample policy-development diagnostic",
+    "independent_out_of_sample_policy_evaluation": false
+  },
+  "full_run_claim": "All five notebooks completed against the verified Release asset; numerical outputs are stage-level offline evidence only."
 }
